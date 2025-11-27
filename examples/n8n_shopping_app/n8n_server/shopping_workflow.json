@@ -1,0 +1,72 @@
+{
+    "name": "Shopping App GenUI Backend",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "chat",
+                "options": {}
+            },
+            "id": "webhook-node",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract the user prompt\nconst prompt = $input.body.prompt || '';\n\n// Mock AI Logic\n// In a real scenario, you would use an 'AI Agent' node here connected to OpenAI/Anthropic.\n// The Agent would call tools and you would format its output to this JSON structure.\n\nlet response = [];\n\nif (prompt.toLowerCase().includes('headphone')) {\n  response = [\n    {\n      \"type\": \"text\",\n      \"content\": \"I found some great headphones for you! The Sony WH-1000XM5 are currently the best in class for noise cancellation.\"\n    },\n    {\n      \"type\": \"ui\",\n      \"component\": \"ProductCard\",\n      \"data\": {\n        \"name\": \"Sony WH-1000XM5\",\n        \"price\": \"$348.00\",\n        \"imageUrl\": \"https://m.media-amazon.com/images/I/51SKmu2G9FL._AC_SL1000_.jpg\",\n        \"affiliateLink\": \"https://amazon.com/dp/B09XS7JWHH\",\n        \"rating\": 4.8\n      }\n    }\n  ];\n} else if (prompt.toLowerCase().includes('shoe')) {\n  response = [\n    {\n      \"type\": \"text\",\n      \"content\": \"Check out these running shoes. They are very popular right now.\"\n    },\n    {\n      \"type\": \"ui\",\n      \"component\": \"ProductCard\",\n      \"data\": {\n        \"name\": \"Nike Air Zoom Pegasus 39\",\n        \"price\": \"$120.00\",\n        \"imageUrl\": \"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/e6b6e1d9-7e56-4231-885e-2647e707f2a4/air-zoom-pegasus-39-mens-road-running-shoes-d4dvTm.png\",\n        \"affiliateLink\": \"https://nike.com/pegasus\",\n        \"rating\": 4.6\n      }\n    }\n  ];\n} else {\n  response = [\n    {\n      \"type\": \"text\",\n      \"content\": \"I can help you find products! Try asking for 'headphones' or 'shoes'.\"\n    }\n  ];\n}\n\nreturn response;"
+            },
+            "id": "mock-ai-logic",
+            "name": "Mock AI Agent",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "response-node",
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Mock AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mock AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

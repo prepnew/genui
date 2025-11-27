@@ -1,0 +1,5 @@
+package com.example.n8n_shopping_app
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
